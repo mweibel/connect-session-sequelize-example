@@ -22,7 +22,7 @@ const app = express();
 
 const store = new SequelizeStore({
   db: sequelize,
-  table: "Session",
+  table: "app_sessions",
   checkExpirationInterval: 24 * 60 * 60 * 1000,
   expiration: 14 * 86400,
   extendDefaultFields,
