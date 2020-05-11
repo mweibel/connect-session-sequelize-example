@@ -4,10 +4,30 @@ const session = require("express-session");
 
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const sequelize = new Sequelize("sqlite::memory");
+const Session = sequelize.define("app_sessions", {
+  sid: {
+    type: Sequelize.STRING,
+    primaryKey: true,
+  },
+  expires: Sequelize.DATE,
+  data: Sequelize.STRING(50000),
+});
+
+const extendDefaultFields = (defaults, session) => ({
+  data: defaults.data,
+  expires: defaults.expires,
+});
 
 const app = express();
 
-const store = new SequelizeStore({ db: sequelize });
+const store = new SequelizeStore({
+  db: sequelize,
+  table: "Session",
+  checkExpirationInterval: 24 * 60 * 60 * 1000,
+  expiration: 14 * 86400,
+  extendDefaultFields,
+});
+
 app.use(
   session({
     secret: "guinea pig",
